@@ -19,5 +19,24 @@ std::vector<std::vector<cv::Point>> find_contours(const cv::Mat& input) {
     
     std::vector<std::vector<cv::Point>> res;
     // IMPLEMENT YOUR CODE HERE
+    using namespace cv;
+    Mat gray;
+    cvtColor(input, gray, COLOR_BGR2GRAY);
+    Mat Binary;
+    threshold(gray, Binary, 0, 255, THRESH_BINARY | THRESH_OTSU);
+    std::vector<std::vector<cv::Point>> contour;
+    std::vector<Vec4i> hi;
+    findContours(Binary, contour, hi, RETR_TREE, CHAIN_APPROX_SIMPLE);
+    for (size_t i = 0; i < contour.size(); i++)
+    {
+        if (hi[i][3] != -1 && hi[i][2] == -1)
+        {
+            res.push_back(contour[i]);
+        }
+    }
+    Mat img = Mat::zeros(input.size(),input.type());
+    drawContours(img, res, -1, Scalar(0, 0, 0), 2);
+    imshow("Contour",img);
+    waitKey(0);
     return res;
 }
